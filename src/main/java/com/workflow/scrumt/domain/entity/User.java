@@ -3,16 +3,12 @@ package com.workflow.scrumt.domain.entity;
 import com.workflow.scrumt.domain.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_user")
-@NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class User {
 
@@ -20,17 +16,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Username cannot be null or empty")
-    @Size(min = 4, max = 100, message = "The username cannot be shorter than 4 characters nor longer than 100 characters")
+    @NotBlank(message = "Name cannot be null or empty")
+    @Size(min = 4, max = 100, message = "The name cannot be shorter than 4 characters nor longer than 100 characters")
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @NotNull(message = "E-mail cannot be null or empty")
+    @NotBlank(message = "E-mail cannot be null or empty")
     @Email(message = "Invalid email")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @NotNull(message = "Password cannot be null or empty")
+    @NotBlank(message = "Password cannot be null or empty")
     @Size(min = 8, max = 100, message = "The user password cannot be shorter than 8 characters and cannot exceed 100 characters")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
@@ -58,14 +54,10 @@ public class User {
     @Column(name = "two_factor_enabled", nullable = false)
     private boolean twoFactorEnabled;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private UserRole role;
-
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt, byte failedLoginAttempts, boolean accountLocked, LocalDateTime lockTime, boolean twoFactorEnabled, UserRole role) {
+    public User(Long id, String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt, byte failedLoginAttempts, boolean accountLocked, LocalDateTime lockTime, boolean twoFactorEnabled) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -76,7 +68,6 @@ public class User {
         this.accountLocked = accountLocked;
         this.lockTime = lockTime;
         this.twoFactorEnabled = twoFactorEnabled;
-        this.role = role;
     }
 
     public Long getId() {
@@ -157,13 +148,5 @@ public class User {
 
     public void setTwoFactorEnabled(boolean twoFactorEnabled) {
         this.twoFactorEnabled = twoFactorEnabled;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
     }
 }

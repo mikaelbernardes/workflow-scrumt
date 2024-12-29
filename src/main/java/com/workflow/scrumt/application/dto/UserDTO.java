@@ -1,26 +1,24 @@
 package com.workflow.scrumt.application.dto;
 
-import com.workflow.scrumt.domain.enums.UserRole;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 @Data
 public class UserDTO {
 
     private Long id;
 
-    @NotNull(message = "Username cannot be null or empty")
-    @Size(min = 4, max = 100, message = "The username cannot be shorter than 4 characters nor longer than 100 characters")
+    @NotBlank(message = "Name cannot be null or empty")
+    @Size(min = 4, max = 100, message = "The name cannot be shorter than 4 characters nor longer than 100 characters")
     private String name;
 
-    @NotNull(message = "E-mail cannot be null or empty")
+    @NotBlank(message = "E-mail cannot be null or empty")
     @Email(message = "Invalid email")
     private String email;
 
-    @NotNull(message = "Password cannot be null or empty")
+    @NotBlank(message = "Password cannot be null or empty")
     @Size(min = 8, max = 100, message = "The user password cannot be shorter than 8 characters and cannot exceed 100 characters")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
@@ -28,17 +26,27 @@ public class UserDTO {
     )
     private String password;
 
-    private UserRole role;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String name, String email, String password, UserRole role) {
+    public UserDTO(
+            Long id,
+            String name,
+            String email,
+            String password,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {
@@ -73,11 +81,19 @@ public class UserDTO {
         this.password = password;
     }
 
-    public UserRole getRole() {
-        return role;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
