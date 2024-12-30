@@ -9,6 +9,7 @@ import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.UserRepository;
 import com.workflow.scrumt.domain.useCase.user.CreateUserUseCase;
 import com.workflow.scrumt.domain.useCase.user.PatchUserUseCase;
+import com.workflow.scrumt.domain.useCase.user.FindUserByIdUseCase;
 import com.workflow.scrumt.domain.useCase.user.UpdateUserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ import java.util.Map;
 public class UserService implements
         CreateUserUseCase,
         UpdateUserUseCase,
-        PatchUserUseCase
+        PatchUserUseCase,
+        FindUserByIdUseCase
 {
 
     @Autowired
@@ -63,6 +65,7 @@ public class UserService implements
 
     @Override
     public User patchUser(Long id, Map<String, Object> updates) {
+        userValidation.validatePatch(id, updates);
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
 
@@ -83,5 +86,12 @@ public class UserService implements
         });
 
         return userRepository.save(existingUser);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        userValidation.validateRead(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
     }
 }
