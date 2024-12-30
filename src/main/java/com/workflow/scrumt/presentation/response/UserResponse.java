@@ -7,10 +7,6 @@ public record UserResponse(
         String name,
         String email,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        byte failedLoginAttempts,
-        boolean accountLocked,
-        LocalDateTime lockTime,
-        boolean twoFactorEnabled
+        LocalDateTime updatedAt
 ) {
 }

@@ -7,10 +7,7 @@ import com.workflow.scrumt.presentation.response.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -27,11 +24,23 @@ public class UserController {
                 createdUser.getName(),
                 createdUser.getEmail(),
                 createdUser.getCreatedAt(),
-                createdUser.getUpdatedAt(),
-                createdUser.getFailedLoginAttempts(),
-                createdUser.isAccountLocked(),
-                createdUser.getLockTime(),
-                createdUser.isTwoFactorEnabled()
+                createdUser.getUpdatedAt()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserDTO userDTO
+    ){
+        User updateUser = userService.updateUser(id, userDTO);
+        UserResponse response = new UserResponse(
+                updateUser.getId(),
+                updateUser.getName(),
+                updateUser.getEmail(),
+                updateUser.getCreatedAt(),
+                updateUser.getUpdatedAt()
         );
         return ResponseEntity.ok(response);
     }

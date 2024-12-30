@@ -40,8 +40,25 @@ public class UserValidation extends EntityValidation<UserDTO> {
     }
 
     @Override
-    public void validateUpdate(UserDTO entity) {
-
+    public void validateUpdate(Long id, UserDTO user) {
+        if (id == null || id <= 0) {
+            throw new CustomException("The id is required.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            throw new CustomException("The name is required.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+        if (user.getName().length() < 4 || user.getName().length() > 100) {
+            throw new CustomException("The name cannot be shorter than 4 characters nor longer than 100 characters", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new CustomException("The email is required.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+        if (!Pattern.matches(EMAIL_REGEX, user.getEmail())) {
+            throw new CustomException("The email is invalid.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+        if (user.getPassword() != null) {
+            throw new CustomException("It is not allowed to change the password.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override

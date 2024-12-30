@@ -8,6 +8,7 @@ import com.workflow.scrumt.domain.exceptions.CustomException;
 import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.UserRepository;
 import com.workflow.scrumt.domain.useCase.user.CreateUserUseCase;
+import com.workflow.scrumt.domain.useCase.user.UpdateUserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
-public class UserService implements CreateUserUseCase {
+public class UserService implements CreateUserUseCase, UpdateUserUseCase {
 
     @Autowired
     private UserRepository userRepository;
@@ -35,5 +36,22 @@ public class UserService implements CreateUserUseCase {
         user.setCreatedAt(LocalDateTime.now());
         User newUser = userMapper.toEntity(user);
         return userRepository.save(newUser);
+    }
+
+    @Override
+    public User updateUser(Long id, UserDTO user) {
+        userValidation.validateUpdate(id, user);
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
+
+        if (!existingUser.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(user.getEmail())) {
+            throw new CustomException("Email already exists.", ExceptionLevel.ERROR, HttpStatus.CONFLICT);
+        }
+
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(existingUser);
     }
 }

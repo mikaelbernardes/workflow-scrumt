@@ -14,7 +14,7 @@ public abstract class EntityValidation<T> {
 
     public abstract void validateCreate(T entity);
 
-    public abstract void validateUpdate(T entity);
+    public abstract void validateUpdate(Long id, T entity);
 
     public abstract void validateDelete(Long id);
 
