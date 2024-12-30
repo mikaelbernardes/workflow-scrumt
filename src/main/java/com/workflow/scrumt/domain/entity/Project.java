@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_project")
@@ -25,14 +27,18 @@ public class Project {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "project")
+    private List<UserProject> userProjects = new ArrayList<>();
+
     public Project() {
     }
 
-    public Project(Long id, String name, String description, LocalDateTime createdAt) {
+    public Project(Long id, String name, String description, LocalDateTime createdAt, List<UserProject> userProjects) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.createdAt = createdAt;
+        this.userProjects = userProjects;
     }
 
     public Long getId() {
@@ -65,5 +71,13 @@ public class Project {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<UserProject> getUserProjects() {
+        return userProjects;
+    }
+
+    public void setUserProjects(List<UserProject> userProjects) {
+        this.userProjects = userProjects;
     }
 }

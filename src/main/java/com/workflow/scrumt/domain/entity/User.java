@@ -6,6 +6,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_user")
@@ -54,10 +56,25 @@ public class User {
     @Column(name = "two_factor_enabled", nullable = false)
     private boolean twoFactorEnabled;
 
+    @OneToMany(mappedBy = "user")
+    private List<UserProject> userProjects = new ArrayList<>();
+
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, LocalDateTime createdAt, LocalDateTime updatedAt, byte failedLoginAttempts, boolean accountLocked, LocalDateTime lockTime, boolean twoFactorEnabled) {
+    public User(
+            Long id,
+            String name,
+            String email,
+            String password,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            byte failedLoginAttempts,
+            boolean accountLocked,
+            LocalDateTime lockTime,
+            boolean twoFactorEnabled,
+            List<UserProject> userProjects
+    ) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -68,6 +85,7 @@ public class User {
         this.accountLocked = accountLocked;
         this.lockTime = lockTime;
         this.twoFactorEnabled = twoFactorEnabled;
+        this.userProjects = userProjects;
     }
 
     public Long getId() {
@@ -148,5 +166,13 @@ public class User {
 
     public void setTwoFactorEnabled(boolean twoFactorEnabled) {
         this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public List<UserProject> getUserProjects() {
+        return userProjects;
+    }
+
+    public void setUserProjects(List<UserProject> userProjects) {
+        this.userProjects = userProjects;
     }
 }
