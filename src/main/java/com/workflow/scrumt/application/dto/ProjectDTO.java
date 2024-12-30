@@ -1,34 +1,26 @@
-package com.workflow.scrumt.domain.entity;
+package com.workflow.scrumt.application.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "tb_project")
-public class Project {
+public class ProjectDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Name cannot be null or empty")
     @Size(min = 2, max = 150, message = "The project name cannot be shorter than 2 characters and cannot exceed 150 characters")
-    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public Project() {
+    public ProjectDTO() {
     }
 
-    public Project(Long id, String name, String description, LocalDateTime createdAt) {
+    public ProjectDTO(Long id, String name, String description, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.description = description;
