@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -41,6 +43,22 @@ public class UserController {
                 updateUser.getEmail(),
                 updateUser.getCreatedAt(),
                 updateUser.getUpdatedAt()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserResponse> patchUser(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> updates
+    ) {
+        User patchedUser = userService.patchUser(id, updates);
+        UserResponse response = new UserResponse(
+                patchedUser.getId(),
+                patchedUser.getName(),
+                patchedUser.getEmail(),
+                patchedUser.getCreatedAt(),
+                patchedUser.getUpdatedAt()
         );
         return ResponseEntity.ok(response);
     }
