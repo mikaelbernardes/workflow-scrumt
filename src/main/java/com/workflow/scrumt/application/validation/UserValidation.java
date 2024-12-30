@@ -97,7 +97,9 @@ public class UserValidation extends EntityValidation<UserDTO> {
 
     @Override
     public void validateDelete(Long id) {
-
+        if (id == null || id <= 0) {
+            throw new CustomException("The id is required.", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override

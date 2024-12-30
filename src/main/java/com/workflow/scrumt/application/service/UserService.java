@@ -7,10 +7,7 @@ import com.workflow.scrumt.domain.entity.User;
 import com.workflow.scrumt.domain.exceptions.CustomException;
 import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.UserRepository;
-import com.workflow.scrumt.domain.useCase.user.CreateUserUseCase;
-import com.workflow.scrumt.domain.useCase.user.PatchUserUseCase;
-import com.workflow.scrumt.domain.useCase.user.FindUserByIdUseCase;
-import com.workflow.scrumt.domain.useCase.user.UpdateUserUseCase;
+import com.workflow.scrumt.domain.useCase.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +22,8 @@ public class UserService implements
         CreateUserUseCase,
         UpdateUserUseCase,
         PatchUserUseCase,
-        FindUserByIdUseCase
+        FindUserByIdUseCase,
+        DeleteUserUseCase
 {
 
     @Autowired
@@ -93,5 +91,13 @@ public class UserService implements
         userValidation.validateRead(id);
         return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        userValidation.validateDelete(id);
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
+        userRepository.deleteById(existingUser.getId());
     }
 }
