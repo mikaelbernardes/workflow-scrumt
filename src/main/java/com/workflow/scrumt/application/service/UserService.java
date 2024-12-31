@@ -11,6 +11,7 @@ import com.workflow.scrumt.domain.useCase.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,9 @@ public class UserService implements
             throw new CustomException("Email already exists.", ExceptionLevel.ERROR, HttpStatus.CONFLICT);
         }
         user.setCreatedAt(LocalDateTime.now());
+        String encryptedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+        user.setPassword(encryptedPassword);
+        System.out.println("==================> " + encryptedPassword);
         User newUser = userMapper.toEntity(user);
         return userRepository.save(newUser);
     }
