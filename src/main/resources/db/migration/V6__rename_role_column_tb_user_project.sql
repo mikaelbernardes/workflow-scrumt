@@ -1,0 +1,1 @@
+ALTER TABLE tb_user_project RENAME COLUMN role TO user_role;

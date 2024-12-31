@@ -4,15 +4,20 @@ import com.workflow.scrumt.application.dto.ProjectDTO;
 import com.workflow.scrumt.application.mapper.ProjectMapper;
 import com.workflow.scrumt.application.validation.ProjectValidation;
 import com.workflow.scrumt.domain.entity.Project;
+import com.workflow.scrumt.domain.entity.User;
+import com.workflow.scrumt.domain.entity.UserProject;
+import com.workflow.scrumt.domain.enums.UserRole;
 import com.workflow.scrumt.domain.exceptions.CustomException;
 import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.ProjectRepository;
+import com.workflow.scrumt.domain.repository.UserProjectRepository;
 import com.workflow.scrumt.domain.useCase.project.CreateProjectUseCase;
 import com.workflow.scrumt.domain.useCase.project.DeleteProjectUseCase;
 import com.workflow.scrumt.domain.useCase.project.PatchProjectUseCase;
 import com.workflow.scrumt.domain.useCase.project.UpdateProjectUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,13 +37,30 @@ public class ProjectService implements
     private ProjectMapper projectMapper;
     @Autowired
     private ProjectValidation projectValidation;
+    @Autowired
+    private UserProjectRepository userProjectRepository;
 
     @Override
     public Project createProject(ProjectDTO project) {
         projectValidation.validateCreate(project);
+
+        String userId = getAuthenticatedUserId();
+        if (userId == null || userId.isBlank()) {
+            throw new CustomException("User id not found", ExceptionLevel.CRITICAL, HttpStatus.UNAUTHORIZED);
+        }
+
         project.setCreatedAt(LocalDateTime.now());
+
         Project newProject = projectMapper.toEntity(project);
-        return projectRepository.save(newProject);
+        Project savedProject = projectRepository.save(newProject);
+
+        UserProject userProject = new UserProject();
+        userProject.setUser(new User(Long.parseLong(userId)));
+        userProject.setProject(savedProject);
+        userProject.setRole(UserRole.OWNER);
+        userProjectRepository.save(userProject);
+
+        return savedProject;
     }
 
     @Override
@@ -81,5 +103,14 @@ public class ProjectService implements
         Project existingProject = projectRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Project not found", ExceptionLevel.ERROR, HttpStatus.NOT_FOUND));
         projectRepository.deleteById(existingProject.getId());
+    }
+
+    private String getAuthenticatedUserId() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
+            return user.getId().toString();
+        }
+        return null;
     }
 }

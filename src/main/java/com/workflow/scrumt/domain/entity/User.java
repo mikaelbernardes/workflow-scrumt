@@ -65,6 +65,10 @@ public class User implements UserDetails {
     public User() {
     }
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     public User(
             Long id,
             String name,
