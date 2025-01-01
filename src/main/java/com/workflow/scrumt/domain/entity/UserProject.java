@@ -1,5 +1,6 @@
 package com.workflow.scrumt.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.workflow.scrumt.domain.enums.UserRole;
 import jakarta.persistence.*;
 
@@ -13,10 +14,12 @@ public class UserProject {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
+    @JsonBackReference
     private Project project;
 
     @Enumerated(EnumType.STRING)

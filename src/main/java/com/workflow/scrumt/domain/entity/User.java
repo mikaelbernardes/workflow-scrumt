@@ -1,6 +1,6 @@
 package com.workflow.scrumt.domain.entity;
 
-import com.workflow.scrumt.domain.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -60,6 +60,7 @@ public class User implements UserDetails {
     private boolean twoFactorEnabled;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<UserProject> userProjects = new ArrayList<>();
 
     public User() {

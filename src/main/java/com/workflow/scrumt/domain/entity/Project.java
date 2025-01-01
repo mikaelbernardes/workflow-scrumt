@@ -1,5 +1,6 @@
 package com.workflow.scrumt.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -28,6 +29,7 @@ public class Project {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "project")
+    @JsonManagedReference
     private List<UserProject> userProjects = new ArrayList<>();
 
     public Project() {
