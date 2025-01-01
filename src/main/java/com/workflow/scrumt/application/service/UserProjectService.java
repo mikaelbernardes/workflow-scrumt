@@ -3,18 +3,28 @@ package com.workflow.scrumt.application.service;
 import com.workflow.scrumt.application.dto.UserProjectDTO;
 import com.workflow.scrumt.application.mapper.UserProjectMapper;
 import com.workflow.scrumt.application.validation.UserProjectValidation;
+import com.workflow.scrumt.domain.entity.Project;
+import com.workflow.scrumt.domain.entity.User;
 import com.workflow.scrumt.domain.entity.UserProject;
 import com.workflow.scrumt.domain.enums.UserRole;
 import com.workflow.scrumt.domain.exceptions.CustomException;
 import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.UserProjectRepository;
+import com.workflow.scrumt.domain.useCase.userProject.ListProjectsByUserIdUseCase;
+import com.workflow.scrumt.domain.useCase.userProject.ListUsersByProjectIdUseCase;
 import com.workflow.scrumt.domain.useCase.userProject.PatchUserProjectRoleUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class UserProjectService implements PatchUserProjectRoleUseCase {
+public class UserProjectService implements
+        PatchUserProjectRoleUseCase,
+        ListUsersByProjectIdUseCase,
+        ListProjectsByUserIdUseCase
+{
 
     @Autowired
     private UserProjectRepository userProjectRepository;
@@ -43,5 +53,15 @@ public class UserProjectService implements PatchUserProjectRoleUseCase {
         existingUserProject.setRole(userProjectDTO.role());
 
         return userProjectRepository.save(existingUserProject);
+    }
+
+    @Override
+    public List<User> getUsersByProjectId(Long projectId) {
+        return userProjectRepository.findUsersByProjectId(projectId);
+    }
+
+    @Override
+    public List<Project> getProjectsByUserId(Long userId) {
+        return userProjectRepository.findProjectsByUserId(userId);
     }
 }

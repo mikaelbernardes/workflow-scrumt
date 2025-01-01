@@ -4,5 +4,6 @@ public enum UserRole {
     OWNER,
     SCRUM_MASTER,
     PRODUCT_OWNER,
-    DEVELOPER
+    DEVELOPER,
+    UNDEFINED
 }
