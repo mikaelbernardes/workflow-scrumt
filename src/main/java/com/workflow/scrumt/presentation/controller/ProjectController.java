@@ -5,6 +5,7 @@ import com.workflow.scrumt.application.dto.UserDTO;
 import com.workflow.scrumt.application.service.ProjectService;
 import com.workflow.scrumt.domain.entity.Project;
 import com.workflow.scrumt.domain.entity.User;
+import com.workflow.scrumt.presentation.request.AddUserToProjectRequest;
 import com.workflow.scrumt.presentation.response.ProjectResponse;
 import com.workflow.scrumt.presentation.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,12 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/addUserToProject")
+    public ResponseEntity<Void> addUserToProject(@RequestBody AddUserToProjectRequest request) {
+        projectService.addUserToProject(request.projectId(), request.userId(), request.role());
         return ResponseEntity.noContent().build();
     }
 }

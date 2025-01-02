@@ -11,10 +11,7 @@ import com.workflow.scrumt.domain.exceptions.CustomException;
 import com.workflow.scrumt.domain.exceptions.ExceptionLevel;
 import com.workflow.scrumt.domain.repository.ProjectRepository;
 import com.workflow.scrumt.domain.repository.UserProjectRepository;
-import com.workflow.scrumt.domain.useCase.project.CreateProjectUseCase;
-import com.workflow.scrumt.domain.useCase.project.DeleteProjectUseCase;
-import com.workflow.scrumt.domain.useCase.project.PatchProjectUseCase;
-import com.workflow.scrumt.domain.useCase.project.UpdateProjectUseCase;
+import com.workflow.scrumt.domain.useCase.project.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +25,8 @@ public class ProjectService implements
         CreateProjectUseCase,
         UpdateProjectUseCase,
         PatchProjectUseCase,
-        DeleteProjectUseCase
+        DeleteProjectUseCase,
+        AddUserToProjectUseCase
 {
 
     @Autowired
@@ -112,5 +110,40 @@ public class ProjectService implements
             return user.getId().toString();
         }
         return null;
+    }
+
+    private boolean isUserOwnerOfProject(Long projectId, Long userId) {
+        UserProject userProject = userProjectRepository.findByProjectIdAndUserId(projectId, userId);
+        return userProject != null && userProject.getRole().equals(UserRole.OWNER);
+    }
+
+    @Override
+    public boolean addUserToProject(Long projectId, Long userId, UserRole role) {
+
+        if (!UserRole.isValid(role)) {
+            throw new CustomException("Invalid role specified", ExceptionLevel.ERROR, HttpStatus.BAD_REQUEST);
+        }
+
+        String currentUserId = getAuthenticatedUserId();
+
+        if (currentUserId == null || currentUserId.isBlank()) {
+            throw new CustomException("User id not found", ExceptionLevel.CRITICAL, HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!isUserOwnerOfProject(projectId, Long.parseLong(currentUserId))) {
+            throw new CustomException("Only the owner user can add new members", ExceptionLevel.ERROR, HttpStatus.UNAUTHORIZED);
+        }
+
+        if (userProjectRepository.existsByProjectIdAndUserId(projectId, userId)) {
+            throw new CustomException("This user is already a member of this project", ExceptionLevel.INFO, HttpStatus.BAD_REQUEST);
+        }
+
+        UserProject userProject = new UserProject();
+        userProject.setProject(new Project(projectId));
+        userProject.setUser(new User(userId));
+        userProject.setRole(role);
+
+        userProjectRepository.save(userProject);
+        return true;
     }
 }

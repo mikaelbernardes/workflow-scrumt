@@ -35,6 +35,10 @@ public class Project {
     public Project() {
     }
 
+    public Project(Long id) {
+        this.id = id;
+    }
+
     public Project(Long id, String name, String description, LocalDateTime createdAt, List<UserProject> userProjects) {
         this.id = id;
         this.name = name;
